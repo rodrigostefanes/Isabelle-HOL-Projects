@@ -1,0 +1,81 @@
+theory RankLinearGroup
+
+imports Main 
+
+begin
+
+
+(*Auxiliary functions*)
+fun list_mult :: "nat list \<Rightarrow> nat" where
+"list_mult [] = 1"
+|
+"list_mult (x#xs) = x*(list_mult xs)"
+
+(*Ranking*)
+
+fun rank :: "nat list \<Rightarrow> nat list \<Rightarrow> nat" where
+"rank [] [] = 0"
+|
+"rank [] (q#qs)  = 0"
+| 
+"rank (x#xs) []  = 0"
+|
+"rank (x#xs) (q#qs)  = x + q* (rank  xs qs)"
+
+(*Unranking*)
+
+fun unrank :: "nat \<Rightarrow> nat list \<Rightarrow> nat list" where
+"unrank n [] = []"
+|
+"unrank n (q#qs) = (n mod q)#(unrank (n div q) qs)"
+
+(*Conditions*)
+
+abbreviation radix_cond :: "nat list \<Rightarrow> bool" where
+"radix_cond qs \<equiv> (\<forall>i. i<length qs \<longrightarrow> 2 \<le> qs!i)" 
+
+abbreviation rank_cond1 :: " nat list \<Rightarrow> nat list \<Rightarrow> bool" where
+"rank_cond1 xs qs  \<equiv> (length qs = length xs)"
+
+abbreviation rank_cond2 :: "nat list \<Rightarrow> nat list \<Rightarrow> bool" where
+"rank_cond2 xs qs  \<equiv> (\<forall> i. i< length xs \<longrightarrow> xs!i \<le> qs!i-1)"
+
+abbreviation rank_cond :: "nat list \<Rightarrow> nat list \<Rightarrow> bool" where
+"rank_cond  xs qs  \<equiv> (rank_cond1 xs qs  \<and> rank_cond2 xs qs \<and> radix_cond qs)"
+
+abbreviation unrank_cond1 :: " nat \<Rightarrow> nat list \<Rightarrow> bool" where
+"unrank_cond1 n qs  \<equiv> (n\<le>(list_mult qs -1))"
+
+abbreviation unrank_cond :: " nat \<Rightarrow> nat list \<Rightarrow> bool" where
+"unrank_cond n qs  \<equiv> (unrank_cond1 n qs \<and> radix_cond qs)"
+
+(*Ranking and Unranking are each others inverse*)
+
+lemma rank_cond_implies_unrank_cond: "rank_cond xs qs \<Longrightarrow> unrank_cond (rank xs qs) qs"
+proof (induction xs arbitrary: qs)
+  case Nil
+  then show ?case by simp
+next
+  case (Cons x xs)
+  then show ?case 
+  proof (cases qs)
+    case Nil
+    then show ?thesis by simp
+  next
+    case (Cons q qs)
+    then show ?thesis
+    proof -
+      assume 1: "rank_cond (x#xs) (q#qs)"
+      have 2: "rank_cond xs qs" using 1 by fastforce
+      have 3: "unrank_cond (rank xs qs) qs" using 2 and Cons.IH by simp
+      have 4: "rank (x#xs) (q#qs)  = x + q* (rank  xs qs)" by simp
+      have 5: "rank xs qs \<le> list_mult qs -1" using  3 by simp
+      have 6: "unrank_cond (rank (x#xs) (q#qs)) (q#qs)" 
+  qed
+qed
+
+
+
+
+
+end

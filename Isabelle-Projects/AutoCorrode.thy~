@@ -1,0 +1,46 @@
+theory AutoCorrode
+  imports
+    Micro_Rust_Std_Lib.StdLib_All
+begin
+
+(*Boilerplate*)
+locale showcase_ctx =
+    reference reference_types +
+    \<comment> \<open>Import \<^verbatim>\<open>reference_allocatable\<close> so we can allocate references for \<^verbatim>\<open>64 word\<close>.\<close>
+    ref_word64: reference_allocatable reference_types _ _ _ _ _ _ _ word64_prism +
+    ref_nat: reference_allocatable reference_types _ _ _ _ _ _ _ nat_prism +
+    ref_bool: reference_allocatable reference_types _ _ _ _ _ _ _ bool_prism
+  for 
+  reference_types :: \<open>'s::{sepalg} \<Rightarrow> 'addr \<Rightarrow> 'gv \<Rightarrow> 'abort \<Rightarrow> 'i prompt \<Rightarrow> 'o prompt_output \<Rightarrow> unit\<close>
+  \<comment> \<open>Ignore for now\<close>
+  and word64_prism :: \<open>('gv, 64 word) prism\<close>
+  and bool_prism :: \<open>('gv, bool) prism\<close>
+  and nat_prism :: \<open>('gv, nat) prism\<close>
+begin
+
+adhoc_overloading store_reference_const \<rightleftharpoons> ref_word64.new
+adhoc_overloading store_reference_const \<rightleftharpoons> ref_nat.new
+adhoc_overloading store_reference_const \<rightleftharpoons> ref_bool.new
+adhoc_overloading store_update_const \<rightleftharpoons> update_fun
+(*End of the Boilerplate*)
+
+definition ref_test where \<open>ref_test \<equiv> FunctionBody \<lbrakk>
+    let mut nat_ref = \<llangle>0 :: nat\<rrangle>;
+    let mut bool_ref = \<llangle>False :: bool\<rrangle>;
+    if *bool_ref {
+      nat_ref = 42;
+    } else {
+      nat_ref = 12;
+    };
+    *nat_ref
+  \<rbrakk>\<close>
+
+
+
+
+
+
+
+
+
+end
