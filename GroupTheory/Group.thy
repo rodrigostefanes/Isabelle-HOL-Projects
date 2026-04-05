@@ -8,7 +8,7 @@ https://lawrencecpaulson.github.io/2022/03/23/Locales.html and
  https://www.isa-afp.org/entries/Jacobson_Basic_Algebra.html*)
 
 (*Since we want to give examples of the structures we are going to work, like naturals and integers,
-we need to import Main. But groups and monoids are already defined in Main. Thus, we need to give it
+we need to import Main. But groups and monoids are already defined in Main. Hence, we need to give
 another name to monoids and groups.*)
 
 (*Remember that infixl tells us that we should parse the strings by the left. So x \<cdot> y \<cdot> z is parsed as (x\<cdot>y)\<cdot>z*)
